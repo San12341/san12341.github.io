@@ -1,325 +1,324 @@
 <!DOCTYPE html>
-<html>
-<head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>烟花</title>
+<html lang="en">
 
-<style>
-html,body{height:100%;margin:0;padding:0}
-ul,li{text-indent:0;text-decoration:none;margin:0;padding:0}
-img{border:0}
-body{background-color:#000;color:#999;font:100%/18px helvetica, arial, sans-serif}
-canvas{cursor:crosshair;display:block;left:0;position:absolute;top:0;z-index:20}
-</style>
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<link rel="stylesheet" type="text/css" href="css/css.css">
+	<script type="text/javascript" src="js/TweenMax.min.js"></script>
+	<title>Document</title>
+	<style>
+		body {
+			padding: 0;
+			overflow: hidden;
+			margin: 0;
+		}
 
+		canvas {
+			width: 100vw;
+			height: 100vh;
+			display: block;
+
+		}
+
+		.top {
+			width: 100%;
+			height: 100vh;
+			position: relative;
+			margin: 0 auto;
+		}
+
+		.new {
+			position: absolute;
+			left: 1%;
+			top: 0%;
+			width: 98%;
+		}
+		.autotype{
+			position: absolute;
+			left: 0%;
+			top: 30%;
+			width: 100%;
+			text-align: center;
+		}
+		.autotype p{
+			color:#fff;
+			font-size: 20px;
+		}
+
+	</style>
 </head>
+
 <body>
+	<div class="top">
+		<!-- 音乐  -->
+		<div class="player">
+			<div class="player__bar">
+				<div class="player__album">
+					<div class="player__albumImg active-song" data-author="Khalid" data-song="Location" data data-src="诗音 - Distance.mp3" style="background-image: url(images/a1.png)">
+					</div>
 
-<script type="text/javascript" src="js/jquery-3.2.0.js"></script>
-<script type="text/javascript">
-$(function(){
-var Fireworks = function(){
-var self = this;
-var rand = function(rMi, rMa){return ~~((Math.random()*(rMa-rMi+1))+rMi);}
-var hitTest = function(x1, y1, w1, h1, x2, y2, w2, h2){return !(x1 + w1 < x2 || x2 + w2 < x1 || y1 + h1 < y2 || y2 + h2 < y1);};
-window.requestAnimFrame=function(){return window.requestAnimationFrame||window.webkitRequestAnimationFrame||window.mozRequestAnimationFrame||window.oRequestAnimationFrame||window.msRequestAnimationFrame||function(a){window.setTimeout(a,1E3/60)}}();
+					<div class="player__controls">
 
-self.init = function(){ 
-self.canvas = document.createElement('canvas');             
-self.canvas.width = self.cw = $(window).innerWidth();
-self.canvas.height = self.ch = $(window).innerHeight();         
-self.particles = [];    
-self.partCount = 150;
-self.fireworks = [];    
-self.mx = self.cw/2;
-self.my = self.ch/2;
-self.currentHue = 30;
-self.partSpeed = 5;
-self.partSpeedVariance = 10;
-self.partWind = 50;
-self.partFriction = 5;
-self.partGravity = 1;
-self.hueMin = 0;
-self.hueMax = 360;
-self.fworkSpeed = 4;
-self.fworkAccel = 10;
-self.hueVariance = 30;
-self.flickerDensity = 25;
-self.showShockwave = true;
-self.showTarget = false;
-self.clearAlpha = 25;
+						<div class="player__play">
+							<svg class="icon play" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+								<path d="M51.109 30.335l-36-24A2 2 0 0 0 12 8v48a2.003 2.003 0 0 0 2 2c.388 0 .775-.113 1.109-.336l36-24a2 2 0 0 0 0-3.329z"
+								/>
+							</svg>
+							<svg class="icon pause" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+								<path d="M22.537 8.046h17.791c1.104 0 2.003.898 2.003 1.993v79.912a2.005 2.005 0 0 1-2.003 2.003h-17.79a2.005 2.005 0 0 1-2.003-2.003V10.04c0-1.095.898-1.993 2.002-1.993zM59.672 8.046h17.8c1.095 0 1.993.898 1.993 1.993v79.912a2.003 2.003 0 0 1-1.993 2.003h-17.8a1.997 1.997 0 0 1-1.993-2.003V10.04c0-1.095.889-1.993 1.993-1.993z"
+								/>
+							</svg>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	    <div class="autotype" id="autotype">
+				<p>新年到,鸿运照,</p>
+				<p>烦恼的事儿往边靠,</p>
+				<p>年年有此时,岁岁有今朝！</p>
+				<p>-祝愿大家新春快乐-</p>
+				<p>(*^▽^*)</p>
+			</div>
+		<!--  -->
+		<canvas id="canvas"></canvas>
+	</div>
+</body>
+<script src="./js/jquery-3.2.1.min.js"></script>
+<script>
+	$(function () {
+		var canvas = $('#canvas')[0];
+		canvas.width = $(window).width();
+		canvas.height = $(window).height();
+		var ctx = canvas.getContext('2d');
 
-$(document.body).append(self.canvas);
-self.ctx = self.canvas.getContext('2d');
-self.ctx.lineCap = 'round';
-self.ctx.lineJoin = 'round';
-self.lineWidth = 1;
-self.bindEvents();          
-self.canvasLoop();
+		// resize
+		$(window).on('resize', function () {
+			canvas.width = $(window).width();
+			canvas.height = $(window).height();
+			ctx.fillStyle = '#000';
+			ctx.fillRect(0, 0, canvas.width, canvas.height);
+		});
 
-self.canvas.onselectstart = function() {
-return false;
-};
-};      
+		// init
+		ctx.fillStyle = '#000';
+		ctx.fillRect(0, 0, canvas.width, canvas.height);
+		// objects
+		var listFire = [];
+		var listFirework = [];
+		var fireNumber = 10;
+		var center = { x: canvas.width / 2, y: canvas.height / 2 };
+		var range = 100;
+		for (var i = 0; i < fireNumber; i++) {
+			var fire = {
+				x: Math.random() * range / 2 - range / 4 + center.x,
+				y: Math.random() * range * 2 + canvas.height,
+				size: Math.random() + 0.5,
+				fill: '#fd1',
+				vx: Math.random() - 0.5,
+				vy: -(Math.random() + 4),
+				ax: Math.random() * 0.02 - 0.01,
+				far: Math.random() * range + (center.y - range)
+			};
+			fire.base = {
+				x: fire.x,
+				y: fire.y,
+				vx: fire.vx
+			};
+			//
+			listFire.push(fire);
+		}
 
-self.createParticles = function(x,y, hue){
-var countdown = self.partCount;
-while(countdown--){
-var newParticle = {
-    x: x,
-    y: y,
-    coordLast: [
-        {x: x, y: y},
-        {x: x, y: y},
-        {x: x, y: y}
-    ],
-    angle: rand(0, 360),
-    speed: rand(((self.partSpeed - self.partSpeedVariance) <= 0) ? 1 : self.partSpeed - self.partSpeedVariance, (self.partSpeed + self.partSpeedVariance)),
-    friction: 1 - self.partFriction/100,
-    gravity: self.partGravity/2,
-    hue: rand(hue-self.hueVariance, hue+self.hueVariance),
-    brightness: rand(50, 80),
-    alpha: rand(40,100)/100,
-    decay: rand(10, 50)/1000,
-    wind: (rand(0, self.partWind) - (self.partWind/2))/25,
-    lineWidth: self.lineWidth
-};              
-self.particles.push(newParticle);
-}
-};
+		function randColor() {
+			var r = Math.floor(Math.random() * 256);
+			var g = Math.floor(Math.random() * 256);
+			var b = Math.floor(Math.random() * 256);
+			var color = 'rgb($r, $g, $b)';
+			color = color.replace('$r', r);
+			color = color.replace('$g', g);
+			color = color.replace('$b', b);
+			return color;
+		}
 
+		(function loop() {
+			requestAnimationFrame(loop);
+			update();
+			draw();
+		})();
 
-self.updateParticles = function(){
-var i = self.particles.length;
-while(i--){
-var p = self.particles[i];
-var radians = p.angle * Math.PI / 180;
-var vx = Math.cos(radians) * p.speed;
-var vy = Math.sin(radians) * p.speed;
-p.speed *= p.friction;
-                
-p.coordLast[2].x = p.coordLast[1].x;
-p.coordLast[2].y = p.coordLast[1].y;
-p.coordLast[1].x = p.coordLast[0].x;
-p.coordLast[1].y = p.coordLast[0].y;
-p.coordLast[0].x = p.x;
-p.coordLast[0].y = p.y;
+		function update() {
+			for (var i = 0; i < listFire.length; i++) {
+				var fire = listFire[i];
+				//
+				if (fire.y <= fire.far) {
+					// case add firework
+					var color = randColor();
+					for (var i = 0; i < fireNumber * 5; i++) {
+						var firework = {
+							x: fire.x,
+							y: fire.y,
+							size: Math.random() + 1.5,
+							fill: color,
+							vx: Math.random() * 5 - 2.5,
+							vy: Math.random() * -5 + 1.5,
+							ay: 0.05,
+							alpha: 1,
+							life: Math.round(Math.random() * range / 2) + range / 2
+						};
+						firework.base = {
+							life: firework.life,
+							size: firework.size
+						};
+						listFirework.push(firework);
+					}
+					// reset
+					fire.y = fire.base.y;
+					fire.x = fire.base.x;
+					fire.vx = fire.base.vx;
+					fire.ax = Math.random() * 0.02 - 0.01;
+				}
+				//
+				fire.x += fire.vx;
+				fire.y += fire.vy;
+				fire.vx += fire.ax;
+			}
 
-p.x += vx;
-p.y += vy;
-p.y += p.gravity;
+			for (var i = listFirework.length - 1; i >= 0; i--) {
+				var firework = listFirework[i];
+				if (firework) {
+					firework.x += firework.vx;
+					firework.y += firework.vy;
+					firework.vy += firework.ay;
+					firework.alpha = firework.life / firework.base.life;
+					firework.size = firework.alpha * firework.base.size;
+					firework.alpha = firework.alpha > 0.6 ? 1 : firework.alpha;
+					//
+					firework.life--;
+					if (firework.life <= 0) {
+						listFirework.splice(i, 1);
+					}
+				}
+			}
+		}
 
-p.angle += p.wind;              
-p.alpha -= p.decay;
+		function draw() {
+			// clear
+			ctx.globalCompositeOperation = 'source-over';
+			ctx.globalAlpha = 0.18;
+			ctx.fillStyle = '#000';
+			ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-if(!hitTest(0,0,self.cw,self.ch,p.x-p.radius, p.y-p.radius, p.radius*2, p.radius*2) || p.alpha < .05){                  
-    self.particles.splice(i, 1);    
-}
-};
-};
+			// re-draw
+			ctx.globalCompositeOperation = 'screen';
+			ctx.globalAlpha = 1;
+			for (var i = 0; i < listFire.length; i++) {
+				var fire = listFire[i];
+				ctx.beginPath();
+				ctx.arc(fire.x, fire.y, fire.size, 0, Math.PI * 2);
+				ctx.closePath();
+				ctx.fillStyle = fire.fill;
+				ctx.fill();
+			}
 
-self.drawParticles = function(){
-var i = self.particles.length;
-while(i--){
-var p = self.particles[i];                          
+			for (var i = 0; i < listFirework.length; i++) {
+				var firework = listFirework[i];
+				ctx.globalAlpha = firework.alpha;
+				ctx.beginPath();
+				ctx.arc(firework.x, firework.y, firework.size, 0, Math.PI * 2);
+				ctx.closePath();
+				ctx.fillStyle = firework.fill;
+				ctx.fill();
+			}
+		}
+	})
+	//音乐
+	$(document).ready(function () {
+		var audioElement = document.createElement('audio');
+		audioElement.setAttribute('src', $('.active-song').attr('data-src'));
 
-var coordRand = (rand(1,3)-1);
-self.ctx.beginPath();                               
-self.ctx.moveTo(Math.round(p.coordLast[coordRand].x), Math.round(p.coordLast[coordRand].y));
-self.ctx.lineTo(Math.round(p.x), Math.round(p.y));
-self.ctx.closePath();               
-self.ctx.strokeStyle = 'hsla('+p.hue+', 100%, '+p.brightness+'%, '+p.alpha+')';
-self.ctx.stroke();              
-
-if(self.flickerDensity > 0){
-    var inverseDensity = 50 - self.flickerDensity;                  
-    if(rand(0, inverseDensity) === inverseDensity){
-        self.ctx.beginPath();
-        self.ctx.arc(Math.round(p.x), Math.round(p.y), rand(p.lineWidth,p.lineWidth+3)/2, 0, Math.PI*2, false)
-        self.ctx.closePath();
-        var randAlpha = rand(50,100)/100;
-        self.ctx.fillStyle = 'hsla('+p.hue+', 100%, '+p.brightness+'%, '+randAlpha+')';
-        self.ctx.fill();
-    }   
-}
-};
-};
-
-
-self.createFireworks = function(startX, startY, targetX, targetY){
-var newFirework = {
-x: startX,
-y: startY,
-startX: startX,
-startY: startY,
-hitX: false,
-hitY: false,
-coordLast: [
-    {x: startX, y: startY},
-    {x: startX, y: startY},
-    {x: startX, y: startY}
-],
-targetX: targetX,
-targetY: targetY,
-speed: self.fworkSpeed,
-angle: Math.atan2(targetY - startY, targetX - startX),
-shockwaveAngle: Math.atan2(targetY - startY, targetX - startX)+(90*(Math.PI/180)),
-acceleration: self.fworkAccel/100,
-hue: self.currentHue,
-brightness: rand(50, 80),
-alpha: rand(50,100)/100,
-lineWidth: self.lineWidth
-};          
-self.fireworks.push(newFirework);
-
-};
-
-
-self.updateFireworks = function(){
-var i = self.fireworks.length;
-
-while(i--){
-var f = self.fireworks[i];
-self.ctx.lineWidth = f.lineWidth;
-
-vx = Math.cos(f.angle) * f.speed,
-vy = Math.sin(f.angle) * f.speed;
-f.speed *= 1 + f.acceleration;              
-f.coordLast[2].x = f.coordLast[1].x;
-f.coordLast[2].y = f.coordLast[1].y;
-f.coordLast[1].x = f.coordLast[0].x;
-f.coordLast[1].y = f.coordLast[0].y;
-f.coordLast[0].x = f.x;
-f.coordLast[0].y = f.y;
-
-if(f.startX >= f.targetX){
-    if(f.x + vx <= f.targetX){
-        f.x = f.targetX;
-        f.hitX = true;
-    } else {
-        f.x += vx;
-    }
-} else {
-    if(f.x + vx >= f.targetX){
-        f.x = f.targetX;
-        f.hitX = true;
-    } else {
-        f.x += vx;
-    }
-}
-
-if(f.startY >= f.targetY){
-    if(f.y + vy <= f.targetY){
-        f.y = f.targetY;
-        f.hitY = true;
-    } else {
-        f.y += vy;
-    }
-} else {
-    if(f.y + vy >= f.targetY){
-        f.y = f.targetY;
-        f.hitY = true;
-    } else {
-        f.y += vy;
-    }
-}               
-
-if(f.hitX && f.hitY){
-    self.createParticles(f.targetX, f.targetY, f.hue);
-    self.fireworks.splice(i, 1);
-    
-}
-};
-};
-
-self.drawFireworks = function(){
-var i = self.fireworks.length;
-self.ctx.globalCompositeOperation = 'lighter';
-while(i--){
-var f = self.fireworks[i];      
-self.ctx.lineWidth = f.lineWidth;
-
-var coordRand = (rand(1,3)-1);                  
-self.ctx.beginPath();                           
-self.ctx.moveTo(Math.round(f.coordLast[coordRand].x), Math.round(f.coordLast[coordRand].y));
-self.ctx.lineTo(Math.round(f.x), Math.round(f.y));
-self.ctx.closePath();
-self.ctx.strokeStyle = 'hsla('+f.hue+', 100%, '+f.brightness+'%, '+f.alpha+')';
-self.ctx.stroke();  
-
-if(self.showTarget){
-    self.ctx.save();
-    self.ctx.beginPath();
-    self.ctx.arc(Math.round(f.targetX), Math.round(f.targetY), rand(1,8), 0, Math.PI*2, false)
-    self.ctx.closePath();
-    self.ctx.lineWidth = 1;
-    self.ctx.stroke();
-    self.ctx.restore();
-}
-    
-if(self.showShockwave){
-    self.ctx.save();
-    self.ctx.translate(Math.round(f.x), Math.round(f.y));
-    self.ctx.rotate(f.shockwaveAngle);
-    self.ctx.beginPath();
-    self.ctx.arc(0, 0, 1*(f.speed/5), 0, Math.PI, true);
-    self.ctx.strokeStyle = 'hsla('+f.hue+', 100%, '+f.brightness+'%, '+rand(25, 60)/100+')';
-    self.ctx.lineWidth = f.lineWidth;
-    self.ctx.stroke();
-    self.ctx.restore();
-}
-};
-};
-
-self.bindEvents = function(){
-$(window).on('resize', function(){          
-clearTimeout(self.timeout);
-self.timeout = setTimeout(function() {
-    self.canvas.width = self.cw = $(window).innerWidth();
-    self.canvas.height = self.ch = $(window).innerHeight();
-    self.ctx.lineCap = 'round';
-    self.ctx.lineJoin = 'round';
-},1);
-});
-
-window.onload=function(){
-     tttt()
-}
-var tttt = setInterval(function(){
-     var e={'pageX':Math.random()*1900,'pageY':Math.random()*900}
-    self.mx = e.pageX - self.canvas.offsetLeft;
-    self.my = e.pageY - self.canvas.offsetTop;
-    self.currentHue = rand(self.hueMin, self.hueMax);
-    self.createFireworks(self.cw/2, self.ch, self.mx, self.my); 
-},50)      
-}
-
-self.clear = function(){
-self.particles = [];
-self.fireworks = [];
-self.ctx.clearRect(0, 0, self.cw, self.ch);
-};
+		var tl = new TimelineMax();
+		tl.to('.player__albumImg', 3, {
+			rotation: '360deg',
+			repeat: -1,
+			ease: Power0.easeNone
+		}, '-=0.2');
+		tl.pause();
 
 
-self.canvasLoop = function(){
-requestAnimFrame(self.canvasLoop, self.canvas);         
-self.ctx.globalCompositeOperation = 'destination-out';
-self.ctx.fillStyle = 'rgba(0,0,0,'+self.clearAlpha/100+')';
-self.ctx.fillRect(0,0,self.cw,self.ch);
-self.updateFireworks();
-self.updateParticles();
-self.drawFireworks();           
-self.drawParticles();
 
-};
+		if ($('.player').hasClass('play')) {
+			$('.player').removeClass('play');
+			audioElement.pause();
+			TweenMax.to('.player__albumImg', 0.2, {
+				scale: 1,
+				ease: Power0.easeNone
+			})
+			tl.pause();
+		} else {
+			$('.player').addClass('play');
+			audioElement.play();
+			TweenMax.to('.player__albumImg', 0.2, {
+				scale: 1.1,
+				ease: Power0.easeNone
+			})
+			tl.resume();
+		}
+		$('.player__play').click(function () {
 
-self.init();        
+			if ($('.player').hasClass('play')) {
+				$('.player').removeClass('play');
+				audioElement.pause();
+				TweenMax.to('.player__albumImg', 0.2, {
+					scale: 1,
+					ease: Power0.easeNone
+				})
+				tl.pause();
+			} else {
+				$('.player').addClass('play');
+				audioElement.play();
+				TweenMax.to('.player__albumImg', 0.2, {
+					scale: 1.1,
+					ease: Power0.easeNone
+				})
+				tl.resume();
+			}
+		})
 
-}
-var fworks = new Fireworks();
-
-});
-
+		function updateInfo() {
+			$('.player__author').text($('.active-song').attr('data-author'));
+			$('.player__song').text($('.active-song').attr('data-song'));
+		}
+		updateInfo();
+	});
+	// 文字
+	$.fn.autotype = function () {
+        var $text = $(this);
+        console.log('this', this);
+        var str = $text.html(); //返回被选 元素的内容
+        var index = 0;
+        var x = $text.html('');
+        //$text.html()和$(this).html('')有区别
+        var timer = setInterval(function () {
+            //substr(index, 1) 方法在字符串中抽取从index下标开始的一个的字符
+            var current = str.substr(index, 1);
+            if (current == '<') {
+                //indexOf() 方法返回">"在字符串中首次出现的位置。
+                index = str.indexOf('>', index) + 1;
+            } else {
+                index++;
+            }
+            //console.log(["0到index下标下的字符",str.substring(0, index)],["符号",index & 1 ? '_': '']);
+            //substring() 方法用于提取字符串中介于两个指定下标之间的字符
+            $text.html(str.substring(0, index) + (index & 1 ? '_' : ''));
+            if (index >= str.length) {
+                clearInterval(timer);
+            }
+        },
+            100);
+    };
+    $("#autotype").autotype();
 </script>
 
-</body>
 </html>
